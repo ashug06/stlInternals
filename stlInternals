@@ -1,0 +1,698 @@
+Unveiling STL's Inner Workings
+The internal implementation of the Standard Template Library (STL) in C++ is a complex and compiler-dependent structure that provides a comprehensive set of generic algorithms, data structures, and utilities for C++ programmers. STL is typically implemented as part of the C++ Standard Library, and its components are designed to work seamlessly with various data types through the use of templates. Key components of the STL include containers (e.g., vectors, lists, maps), algorithms (e.g., sorting, searching), iterators, and function objects.
+
+Let’s learn the implementation of some important containers:
+
+Vector
+Class Definition: The MyVector class is a template class, allowing it to store elements of any data type.
+
+Constructor: The default constructor initializes the vector with a default capacity of 4 and allocates memory for the array.
+
+Destructor: The destructor deallocates the dynamically allocated memory when the vector goes out of scope.
+
+Copy Constructor: Copies the content of another MyVector object during initialization.
+
+Assignment Operator: Overloads the assignment operator to copy the contents of another MyVector object to an existing one.
+
+Resize Method: Adjusts the capacity of the vector to a new size. If the new size is greater than the current capacity, it allocates a new array with double the capacity and copies the existing elements.
+
+Push Back Method: Appends an element to the end of the vector. If the vector is at full capacity, it calls the resize method to increase capacity before adding the element.
+
+Pop Back Method: Removes the last element from the vector by decrementing the size if there are elements present.
+
+At Method: Provides access to the element at a specified index. It performs bounds checking and throws an out_of_range exception if the index is out of bounds.
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class MyVector
+{
+public:
+    T *data;
+    size_t size;
+    size_t capacity;
+
+    // Constructor with initial capacity
+    MyVector() : size(0), capacity(4)
+    {
+        data = new T[capacity];
+    }
+
+    // Destructor
+    ~MyVector()
+    {
+        delete[] data;
+    }
+
+    // Copy Constructor
+    MyVector(const MyVector &other) : size(other.size), capacity(other.capacity)
+    {
+        data = new T[capacity];
+        for (size_t i = 0; i < size; ++i)
+        {
+            data[i] = other.data[i];
+        }
+    }
+
+    // Assignment Operator
+    MyVector &operator=(const MyVector &other)
+    {
+        if (this != &other)
+        {
+            delete[] data;
+            size = other.size;
+            capacity = other.capacity;
+            data = new T[capacity];
+            for (size_t i = 0; i < size; ++i)
+            {
+                data[i] = other.data[i];
+            }
+        }
+        return *this;
+    }
+
+    // Resize the vector
+    void resize(size_t new_size)
+    {
+        if (new_size > capacity)
+        {
+            T *new_data = new T[new_size];
+            for (size_t i = 0; i < size; ++i)
+            {
+                new_data[i] = data[i];
+            }
+
+            delete[] data;
+            data = new_data;
+            capacity = new_size;
+        }
+    }
+
+    // Push an element to the back of the vector
+    void push_back(const T &value)
+    {
+        if (size == capacity)
+        {
+            resize(capacity * 2);
+        }
+        data[size] = value; // Assign value at the current size
+        size++;             // Increment size after assigning the value
+    }
+
+    // Remove last element
+    void pop_back()
+    {
+        if (size > 0)
+        {
+            size--;
+        }
+    }
+
+    // Access element at given index
+    T &at(size_t index)
+    {
+        if (index >= size)
+        {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[index];
+    }
+};
+
+int main()
+{
+    // Example usage
+    MyVector<int> myVec;
+
+    myVec.push_back(1);
+    myVec.push_back(2);
+    myVec.push_back(3);
+    myVec.pop_back();
+    myVec.push_back(4);
+
+    cout << "Element at index 2: " << myVec.at(2) << endl;
+    cout << "Vector size: " << myVec.size << endl;
+    cout << "Vector capacity: " << myVec.capacity << endl;
+
+    return 0;
+}
+
+Pair
+Class Definition: The Pair class has two public member variables, first and second, representing the two values in the pair.
+
+Default Constructor: The default constructor initializes both first and second to their default values.
+
+Parameterized Constructor: Accepts two values of types T1 and T2 and initializes the first and second members with these values.
+
+Copy Constructor: Creates a new Pair object by copying the values from another Pair object.
+
+Assignment Operator: Overloads the assignment operator to copy values from another Pair object.
+
+Equality Operator (==): Compares two Pair objects for equality. Returns true if both first and second members are equal, otherwise false.
+
+Not Equal Operator (!=): Returns the negation of the equality operator. Returns true if the two Pair objects are not equal, otherwise false.
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T1, typename T2>
+class Pair
+{
+public:
+    T1 first;
+    T2 second;
+    Pair()
+    {
+        // Initialize members in the member initialization list
+        first = T1();
+        second = T2();
+    }
+
+    // Parameterized constructor
+    Pair(const T1 &t1, const T2 &t2)
+    {
+        // Initialize members in the member initialization list
+        first = t1;
+        second = t2;
+    }
+
+    // Copy constructor
+    Pair(const Pair &other)
+    {
+        // Initialize members in the member initialization list
+        first = other.first;
+        second = other.second;
+    }
+
+    // Assignment operator
+    Pair &operator=(const Pair &other)
+    {
+        if (this != &other)
+        {
+            first = other.first;
+            second = other.second;
+        }
+        return *this;
+    }
+
+    // Equality operator
+    bool operator==(const Pair &other) const
+    {
+        return (first == other.first) && (second == other.second);
+    }
+
+    // Not equal operator
+    bool operator!=(const Pair &other) const
+    {
+        return !(*this == other);
+    }
+};
+
+int main()
+{
+    // Testing the Pair template
+    Pair<int, double> p1(10, 3.14); // Parameterized constructor
+    Pair<int, double> p2(20, 6.28);
+    Pair<int, double> p3 = p1; // Copy constructor
+
+    cout << "p1: " << p1.first << ", " << p1.second << endl;
+    cout << "p2: " << p2.first << ", " << p2.second << endl;
+    cout << "p3: " << p3.first << ", " << p3.second << endl;
+
+    // Assignment operator
+    p3 = p2;
+
+    cout << "After assignment:" << endl;
+    cout << "p1: " << p1.first << ", " << p1.second << endl;
+    cout << "p2: " << p2.first << ", " << p2.second << endl;
+    cout << "p3: " << p3.first << ", " << p3.second << endl;
+
+    // Equality operator
+    if (p1 == p2)
+    {
+        cout << "p1 and p2 are equal." << endl;
+    }
+    else
+    {
+        cout << "p1 and p2 are not equal." << endl;
+    }
+
+    // Not equal operator
+    if (p2 != p3)
+    {
+        cout << "p2 and p3 are not equal." << endl;
+    }
+    else
+    {
+        cout << "p2 and p3 are equal." << endl;
+    }
+
+    return 0;
+}
+
+Map
+Class Definition (UnorderedMapLinearProbing): This is a template class representing an unordered map with linear probing collision resolution.
+
+Template parameters include Key (type of keys), Value (type of values), and an optional.
+
+Hash parameter for the hash function. If not provided, the default std::hash function for the key type is used.
+
+The class has member variables for the size of the table (size), an array of key-value pairs (table), and a hash function (hasher).
+
+The default size of the table is set to DEFAULT_SIZE (10).
+
+Constructor: The constructor initializes the size of the table and allocates memory for the key-value pairs.
+
+Destructor: The destructor deallocates the memory used for the key-value pairs.
+
+Hash Function (getHash): Calculates the hash value for a given key using the provided hash function (or the default std::hash).
+
+Insert Method: Inserts a key-value pair into the map using linear probing to handle collisions. It calculates the hash index and iterates through the table until an empty slot is found.
+
+Find Method: Searches for a key in the map and retrieves the corresponding value. Uses linear probing to handle collisions.
+
+Remove Method: Removes a key from the map using linear probing to find the key's position. Clears the entry by replacing it with a default-constructed pair.
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename Key, typename Value, typename Hash = std::hash<Key>>
+class UnorderedMapLinearProbing
+{
+public:
+    static const size_t DEFAULT_SIZE = 10;
+
+    size_t size;
+    std::pair<Key, Value> *table;
+    Hash hasher;
+
+    UnorderedMapLinearProbing(size_t initialSize = DEFAULT_SIZE) : size(initialSize)
+    {
+        table = new std::pair<Key, Value>[size];
+    }
+
+    ~UnorderedMapLinearProbing()
+    {
+        delete[] table;
+    }
+
+    size_t getHash(const Key &key) const
+    {
+        return hasher(key) % size;
+    }
+
+    void insert(const Key &key, const Value &value)
+    {
+        size_t index = getHash(key);
+
+        while (table[index].first != Key())
+        {
+            // Linear probing: move to the next index if the current one is occupied
+            index = (index + 1) % size;
+        }
+
+        table[index] = std::make_pair(key, value);
+    }
+
+    bool find(const Key &key, Value &value) const
+    {
+        size_t index = getHash(key);
+
+        while (table[index].first != Key())
+        {
+            if (table[index].first == key)
+            {
+                value = table[index].second;
+                return true;
+            }
+
+            // Linear probing: move to the next index
+            index = (index + 1) % size;
+        }
+
+        return false;
+    }
+
+    void remove(const Key &key)
+    {
+        size_t index = getHash(key);
+
+        while (table[index].first != Key())
+        {
+            if (table[index].first == key)
+            {
+                // Clear the entry by replacing it with a default-constructed pair
+                table[index] = std::make_pair(Key(), Value());
+                return;
+            }
+
+            // Linear probing: move to the next index
+            index = (index + 1) % size;
+        }
+    }
+};
+
+int main()
+{
+    UnorderedMapLinearProbing<std::string, int> myMap;
+
+    myMap.insert("one", 1);
+    myMap.insert("two", 2);
+    myMap.insert("two", 3);
+
+    int value;
+
+    if (myMap.find("two", value))
+    {
+        std::cout << "Value for key 'two': " << value << std::endl;
+    }
+    else
+    {
+        std::cout << "Key 'two' not found" << std::endl;
+    }
+
+    myMap.remove("two");
+
+    if (myMap.find("two", value))
+    {
+        std::cout << "Value for key 'two': " << value << std::endl;
+    }
+    else
+    {
+        std::cout << "Key 'two' not found after removal" << std::endl;
+    }
+
+    return 0;
+}
+
+Heap
+Class Definition (MyPriorityQueue): A template class with a single template parameter T representing the type of elements in the priority queue.
+
+Shift Up (shiftUp) Method: A private method responsible for maintaining the max-heap property after pushing an element. It compares the element at the current index (i) with its parent and swaps them if necessary until the heap property is satisfied.
+
+Shift Down (shiftDown) Method: Another private method responsible for maintaining the max-heap property after popping an element. It compares the element at the current index (i) with its children and swaps it with the larger child until the heap property is satisfied.
+
+Constructor: The default constructor initializes an empty priority queue.
+
+Push Method: Adds an element to the priority queue and maintains the max-heap property using the shiftUp method.
+
+Pop Method: Removes the highest-priority element (root of the heap) from the priority queue, replaces it with the last element, and maintains the max-heap property using the shiftDown method.
+
+Top Method: Returns the highest-priority element without removing it from the priority queue.
+
+Empty Method: Checks if the priority queue is empty.
+
+Size Method: Returns the number of elements in the priority queue.
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class MyPriorityQueue
+{
+private:
+    vector<T> data;
+
+    // Shift up the element at index i
+    void shiftUp(size_t i)
+    {
+        while (i > 0)
+        {
+            size_t parent = (i - 1) / 2;
+            if (data[i] > data[parent])
+            {
+                swap(data[i], data[parent]);
+                i = parent;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    // Shift down the element at index i
+    void shiftDown(size_t i)
+    {
+        size_t n = data.size();
+        while (2 * i + 1 < n)
+        {
+            size_t leftChild = 2 * i + 1;
+            size_t rightChild = 2 * i + 2;
+            size_t largest = i;
+
+            if (leftChild < n && data[leftChild] > data[largest])
+            {
+                largest = leftChild;
+            }
+
+            if (rightChild < n && data[rightChild] > data[largest])
+            {
+                largest = rightChild;
+            }
+
+            if (largest != i)
+            {
+                swap(data[i], data[largest]);
+                i = largest;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+public:
+    // Constructor
+    MyPriorityQueue() {}
+
+    // Push an element into the priority queue
+    void push(const T &value)
+    {
+        data.push_back(value);
+        shiftUp(data.size() - 1);
+    }
+
+    // Pop the highest-priority element from the priority queue
+    void pop()
+    {
+        if (empty())
+        {
+            throw out_of_range("Priority queue is empty");
+        }
+        swap(data.front(), data.back());
+        data.pop_back();
+        shiftDown(0);
+    }
+
+    // Get the highest-priority element without removing it
+    const T &top() const
+    {
+        if (empty())
+        {
+            throw out_of_range("Priority queue is empty");
+        }
+        return data.front();
+    }
+
+    // Check if the priority queue is empty
+    bool empty() const
+    {
+        return data.empty();
+    }
+
+    // Get the number of elements in the priority queue
+    size_t size() const
+    {
+        return data.size();
+    }
+};
+
+int main()
+{
+    // Example usage
+    MyPriorityQueue<int> myPriorityQueue;
+
+    myPriorityQueue.push(3);
+    myPriorityQueue.push(1);
+    myPriorityQueue.push(4);
+    myPriorityQueue.push(1);
+    myPriorityQueue.push(5);
+
+    cout << "Priority Queue size: " << myPriorityQueue.size() << endl;
+
+    while (!myPriorityQueue.empty())
+    {
+        cout << "Top element: " << myPriorityQueue.top() << endl;
+        myPriorityQueue.pop();
+    }
+
+    return 0;
+}
+
+Deque
+Class Definition (MyDeque): A template class with a single template parameter T representing the type of elements in the deque.
+
+Member variables include a dynamic array data for storing elements, frontIndex and backIndex to track the indices of the front and back elements, and capacity to represent the current capacity of the array.
+
+Constructor and Destructor: The constructor initializes the deque with a default capacity of 4.
+
+The destructor deallocates the memory used for the dynamic array.
+
+Resize Method: Resizes the deque to a new capacity. It creates a new array, copies existing elements to the new array, and updates indices and capacity accordingly.
+
+Push Front and Push Back Methods: push_front and push_back methods add elements to the front and back, respectively. If the deque is full, it resizes the array to accommodate more elements.
+
+Pop Front and Pop Back Methods: pop_front and pop_back methods remove elements from the front and back, respectively. If the deque is empty, it throws an out_of_range exception.
+
+Operator[] Overload: Overloads the [] operator to access elements at a specific index in the deque.
+
+Size Method: Calculates and returns the current number of elements in the deque.
+
+Empty Method: Checks if the deque is empty.
+
+Code:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class MyDeque
+{
+public:
+    T *data;
+    size_t frontIndex;
+    size_t backIndex;
+    size_t capacity;
+
+    // Constructor
+    MyDeque() : frontIndex(0), backIndex(0), capacity(4)
+    {
+        data = new T[capacity];
+    }
+
+    // Destructor
+    ~MyDeque()
+    {
+        delete[] data;
+    }
+
+    // Resize the deque to a new capacity
+    void resize(size_t new_capacity)
+    {
+        T *new_data = new T[new_capacity];
+        size_t current_size = size();
+        for (size_t i = 0; i < current_size; ++i)
+        {
+            new_data[i] = (*this)[i];
+        }
+
+        delete[] data;
+        data = new_data;
+        frontIndex = 0;
+        backIndex = current_size;
+        capacity = new_capacity;
+    }
+
+    // Push element at the front
+    void push_front(const T &value)
+    {
+        if (size() == capacity)
+        {
+            resize(capacity * 2);
+        }
+        frontIndex = (frontIndex - 1 + capacity) % capacity;
+        data[frontIndex] = value;
+    }
+
+    // Push element at the back
+    void push_back(const T &value)
+    {
+        if (size() == capacity)
+        {
+            resize(capacity * 2);
+        }
+        data[backIndex] = value;
+        backIndex = (backIndex + 1) % capacity;
+    }
+
+    // Pop element from the front
+    void pop_front()
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Deque is empty");
+        }
+        frontIndex = (frontIndex + 1) % capacity;
+    }
+
+    // Pop element from the back
+    void pop_back()
+    {
+        if (empty())
+        {
+            throw std::out_of_range("Deque is empty");
+        }
+        backIndex = (backIndex - 1 + capacity) % capacity;
+    }
+
+    // Access element at index using []
+    T &operator[](size_t index)
+    {
+        if (index >= size())
+        {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[(frontIndex + index) % capacity];
+    }
+
+    // Get the number of elements in the deque
+    size_t size() const
+    {
+        return (backIndex - frontIndex + capacity) % capacity;
+    }
+
+    // Check if the deque is empty
+    bool empty() const
+    {
+        return frontIndex == backIndex;
+    }
+};
+
+int main()
+{
+    // Example usage
+    MyDeque<int> myDeque;
+
+    myDeque.push_back(1);
+    myDeque.push_back(2);
+    myDeque.push_front(0);
+
+    cout << "Deque size: " << myDeque.size() << endl;
+
+    for (size_t i = 0; i < myDeque.size(); ++i)
+    {
+        cout << myDeque[i] << " ";
+    }
+    cout << endl;
+
+    myDeque.pop_back();
+
+    cout << "Deque size after pop_back: " << myDeque.size() << endl;
+
+    for (size_t i = 0; i < myDeque.size(); ++i)
+    {
+        cout << myDeque[i] << " ";
+    }
+    cout << endl;
+}
