@@ -1,0 +1,333 @@
+Hashing
+Hashing is a technique used in computer science to transform data of arbitrary size into a fixed-size value, typically for the purpose of efficient data retrieval. The process involves using a hash function to map data to a hash code, which is then used as an index or key to access a specific location in a data structure, often an array or hash table.
+
+Hash Function: A hash function is a mathematical function that takes an input (or "key") and produces a fixed-size string of characters, which is typically a hash code. The output, or hash value, is used as an index to store or retrieve data in a data structure. Good hash functions are designed to be fast, deterministic, and to distribute values uniformly across the output range.
+
+Collision: Collision occurs when two different inputs produce the same hash output. Since the output space (e.g., array indices or buckets) is finite while the input space is infinite, collisions are unavoidable. Handling collisions is a critical aspect of designing effective hash functions and data structures.
+
+Handling Collisions
+Open Hashing (Separate Chaining):
+
+In open hashing, each bucket in the hash table maintains a linked list of elements.
+
+If a collision occurs (i.e., two keys hash to the same index), the elements with the same hash value are stored in the same bucket, forming a linked list.
+
+This linked list structure allows multiple elements with the same hash value to coexist in the same location.
+
+Closed Hashing (Open Addressing):
+
+In closed hashing, all elements are stored directly in the array.
+
+When a collision occurs, the algorithm searches for the next available slot in the array based on a probing technique (linear probing, quadratic probing, double hashing, etc.).
+
+The goal is to find an empty slot within the same array, and the process continues until an empty slot is found.
+
+Example of Open and Closed Hashing:
+
+Consider a hash table with 5 buckets (0 to 4) and the following elements to be inserted:
+
+Elements: A, B, C, D, E, F
+
+Open Hashing (Separate Chaining):
+
+Hash Table:
+
+Bucket 0: [A, F]
+
+Bucket 1: [B]
+
+Bucket 2: [C]
+
+Bucket 3: [D]
+
+Bucket 4: [E]
+
+Closed Hashing (Linear Probing):
+
+Hash Table:
+
+Slot 0: A
+
+Slot 1: B
+
+Slot 2: C
+
+Slot 3: D
+
+Slot 4: E
+
+Slot 5: F
+
+In the open hashing example, collisions are handled by forming linked lists in the buckets. In the closed hashing example, linear probing is used to find the next available slot when a collision occurs.
+
+Cyclic Chaos
+"Cyclic chaos" in hashing refers to the unpredictable nature of hash functions and their ability to seemingly distribute values in a chaotic, non-linear fashion. This is a desirable property because it helps prevent patterns in the data from causing collisions and ensures that similar inputs result in significantly different hash codes.
+
+For example, let's say you have a simple hash function that sums the ASCII values of characters in a string. Without some level of chaos, strings with similar characters could hash to the same value, causing clustering and increasing the likelihood of collisions. The cyclic chaos property helps disperse these values more uniformly across the hash space.
+
+Load Factor in Hashing
+The load factor in hashing is a measure of how full a hash table is. It is calculated as the ratio of the number of stored elements to the total number of buckets in the hash table. Mathematically, it is expressed as:
+
+Load Factor = Number of Elements / Number of Buckets​
+
+A high load factor indicates that the hash table is approaching its capacity, which can lead to an increased likelihood of collisions. A low load factor suggests that there is plenty of room in the hash table, potentially leading to inefficient use of memory.
+
+Rehashing
+Rehashing is the process of resizing a hash table and reinserting all existing elements when the load factor exceeds a certain threshold. The goal is to maintain a low load factor, reducing the likelihood of collisions and ensuring efficient use of the hash table.
+
+Example:
+
+Suppose you have a hash table with 8 buckets and the following elements:
+
+Elements: A, B, C, D, E, F, G, H
+
+Initially, the hash table might look like this:
+
+[A,B,C,D,E,F,G,H]
+
+If the load factor exceeds a specified threshold (e.g., 0.75), rehashing is triggered. In this case, the hash table might be resized to 16 buckets. The elements are then redistributed using the new hash function, resulting in a new hash table like this:
+
+[A,,C,,E,,G,H,B, , , , , ,D,F]
+
+Now, the load factor is reduced, and the hash table is less likely to encounter collisions, ensuring efficient performance. Rehashing is a dynamic process that allows hash tables to adapt to changing workloads and maintain their efficiency over time.
+
+
+Types of Error
+Errors in programming can be categorized into different types based on when they occur and their nature. Here are some common types of errors:
+
+Compiler Error:
+Description: Compiler errors occur during the compilation phase when the source code is being translated into machine code. These errors indicate issues with the code syntax or structure that prevent the compiler from generating a valid executable.
+
+Example:
+
+#include <iostream>
+
+int main() 
+{
+	std::cout << "Hello, World!" // Missing semicolon here
+}
+In this example, a semicolon is missing at the end of the std::cout line, causing a compiler error.
+
+Runtime Error:
+Description: Runtime errors occur during the execution of the program. They are often related to unexpected conditions that the program encounters, such as dividing by zero, accessing invalid memory, or using uninitialized variables.
+
+Example:
+
+#include <iostream>
+int main()
+{
+    int arr[5];
+    std::cout << arr[10]; // Accessing an element beyond the array bounds
+    return 0;
+}
+In this example, the program attempts to access an element at index 10 of an array that only has 5 elements, resulting in a runtime error.
+
+Time Limit Exceeded (TLE):
+Description: Time Limit Exceeded occurs when the program takes longer to execute than the allowed time limit. This often happens in scenarios with inefficient algorithms or infinite loops.
+
+Example:
+
+#include <iostream>
+int main() {
+    while (true) {
+        // Infinite loop
+    }
+    return 0;
+}
+This program will not terminate, leading to a Time Limit Exceeded error if there's a restriction on the maximum execution time.
+
+Memory Limit Exceeded (MLE):
+Description: Memory Limit Exceeded occurs when the program consumes more memory than the allowed limit. This can happen due to excessive allocation of memory, creating large data structures, or recursive functions without a base case.
+
+Example:
+
+#include <iostream>
+int main()
+{
+    int *arr = new int[1000000000]; // Allocating a large array
+    delete[] arr;
+    return 0;
+}
+In this example, attempting to allocate a massive array may lead to a Memory Limit Exceeded error if there are restrictions on the maximum allowed memory usage.
+
+Wrong Answer (WA):
+Description: Unlike Compiler Errors, Runtime Errors, Time Limit Exceeded, and Memory Limit Exceeded, "Wrong Answer" doesn't indicate a problem with the program's structure, syntax, or performance. Instead, it means that the program's output is incorrect for at least one test case.
+
+Example:
+
+#include <iostream>
+
+int main()
+{
+    int a, b;
+    std::cin >> a >> b;
+    int sum = a + b;
+    
+    // Incorrect output statement
+    std::cout << "Sum of a and b is: " << sum + 1 << std::endl;
+    return 0;
+}
+
+Reasons for Wrong Answer
+Logic Correct: The overall approach and logic are correct, but there might be an error in the implementation or a specific condition not handled properly.
+
+Silly Mistake: Small oversights, typos, or mistakes in the code that lead to incorrect results.
+
+Stress Testing: The code might fail for large or extreme inputs, revealing inefficiencies in the algorithm.
+
+How to correct these mistakes?
+How to Correct Logic: Perform a thorough review of the algorithm. Test the code with edge values, random inputs, and variations of input parameters. Understand the problem requirements and constraints to ensure the logic aligns with the problem statement. If possible, discuss the logic with peers or mentors to gain additional perspectives.
+
+How to Correct Silly Mistakes: Adopt coverage testing by scrutinizing each line of code. Use code analysis tools or IDE features to highlight potential issues. Pay attention to syntax, variable names, and consistency. Consider using version control systems to track changes and revert to a known-working state if necessary.
+
+How to Perform Stress Testing: Develop a test case generator that produces diverse and challenging inputs. Implement a known-correct or brute-force solution to serve as a reference. Compare the output of the optimized solution with the reference solution for various test cases. Identify the specific input values causing discrepancies and enhance the algorithm accordingly.
+
+Example of stress testing:
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int logic1(int n, int k, int arr[])
+{
+    int st = 0, en = n - 1;
+    sort(arr + st, arr + en);
+    return arr[k - 1];
+}
+
+int correct(int n, int k, int arr[])
+{
+    for (int i = 0; i < n; i++)
+    {
+        int cnt = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (arr[j] < arr[i])
+                cnt++;
+        }
+        if (cnt == (k - 1))
+        {
+            return arr[i];
+        }
+        else
+        {
+            continue;
+        }
+    }
+}
+
+int get_random(int a, int b)
+{
+    return a + rand() % (b - a + 1);
+}
+
+void generate()
+{
+    int t = 100;
+    while (t--)
+    {
+        int n, k;
+        n = get_random(1, 6);
+        k = get_random(1, n);
+
+        int arr[n];
+        set<int> st;
+        while (st.size() < n)
+        {
+            int x = get_random(1, 100);
+            st.insert(x);
+        }
+        int index = 0;
+        for (auto v : st)
+        {
+            arr[index++] = v;
+        }
+        random_shuffle(arr, arr + n);
+
+        cout << "Input generated: \n";
+        cout << n << " " << k << endl;
+        for (int i = 0; i < n; i++)
+        {
+            cout << arr[i] << " ";
+        }
+        cout << endl
+             << endl;
+
+        int code_op = logic1(n, k, arr);
+        int correct_op = correct(n, k, arr);
+        if (code_op != correct_op)
+        {
+            cout << "FAILING!\n";
+            return;
+        }
+    }
+}
+
+void solve()
+{
+    int n, k;
+    cin >> n >> k;
+    int arr[n];
+    for (int i = 0; i < n; i++)
+    {
+        cin >> arr[i];
+    }
+    cout << logic1(n, k, arr) << endl;
+}
+
+int main()
+{
+    // generate();
+    int t;
+    cin >> t;
+    while (t--)
+        solve();
+}
+Explanation:
+
+Functions:
+
+logic1: Implements a sorting-based approach to find the k-th smallest element in the array.
+correct: Implements a naive approach by counting the number of elements smaller than each element to find the k-th smallest element.
+get_random: Generates a random integer in the specified range.
+generate: Generates random test cases with varying sizes and k values to stress test the logic1 function.
+solve: Reads input and calls the logic1 function for solving a single test case.
+
+Stress Testing (generate function):
+
+A loop runs 100 times, generating 100 random test cases.
+
+For each test case, it randomly determines the array size n (between 1 and 6) and the value of k (between 1 and n).
+
+Randomly generates unique integers to form an array and shuffles it.
+
+Prints the generated input.
+
+Calls logic1 and correct functions to calculate the k-th smallest element.
+
+If the outputs of logic1 and correct differ, it prints "FAILING!".
+
+
+Main Function (solve):
+
+Reads the number of test cases t.
+
+Call the solve function for each test case.
+
+
+Observations:
+
+The stress testing is aimed at comparing the output of the logic1 function with a correct but less efficient approach (correct) for a variety of randomly generated cases.
+
+If the logic1 function fails to produce the correct output for any generated case, it indicates a potential issue with the algorithm.
+
+
+Execution:
+
+Initially, the generate function is commented out, and the user is expected to uncomment it to perform stress testing.
+
+The solve function reads user-input test cases when stress testing is not enabled.
+
+
+Output:
+
+If the stress testing finds a case where logic1 and correct produce different results, it prints "FAILING!" to indicate a potential issue with the logic1 function. `
